@@ -8,6 +8,12 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 
 export default class Sketch {
   constructor(selector) {
+    this.areas = [
+      { x: 0, y: -0.05, z: 0, r: 0.15 },
+      { x: 0, y: -0.52, z: -0.02, r: 0.2 },
+      { x: 0.38, y: -0.05, z: 0, r: 0.2 },
+    ];
+
     console.log(selector);
     this.hovered = false;
     this.scene = new THREE.Scene();
@@ -21,6 +27,9 @@ export default class Sketch {
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    this.sphereMeshes = [];
+    this.sphereSelected = -1;
 
     this.container.appendChild(this.renderer.domElement);
 
@@ -36,7 +45,6 @@ export default class Sketch {
 
     this.isPlaying = true;
 
-    // Post-processing setup
     this.composer = new EffectComposer(this.renderer);
     this.renderPass = new RenderPass(this.scene, this.camera);
     this.composer.addPass(this.renderPass);
@@ -47,10 +55,10 @@ export default class Sketch {
       this.camera
     );
     this.outlinePass.selectedObjects = [];
-    this.outlinePass.edgeThickness = 2;
-    this.outlinePass.edgeGlow = 0.5;
-    this.outlinePass.edgeStrength = 10;
-    this.outlinePass.visibleEdgeColor.set(0x00ff00); // Green outline
+    this.outlinePass.edgeThickness = 1;
+    this.outlinePass.edgeGlow = 1.7;
+    this.outlinePass.edgeStrength = 1;
+    this.outlinePass.visibleEdgeColor.set(0x00ff00);
     this.outlinePass.hiddenEdgeColor.set(0x000000);
     this.composer.addPass(this.outlinePass);
 
@@ -77,14 +85,20 @@ export default class Sketch {
     return vec;
   }
 
+  getSphereSelected() {
+    return this.sphereSelected;
+  }
+
   onMouseMove(normx, normy) {
     this.mouse.x = normx;
     this.mouse.y = normy;
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersectables = this.scene.children.filter(
-      (child) => child instanceof THREE.Mesh
+      (child) =>
+        child instanceof THREE.Mesh && !this.sphereMeshes.includes(child)
     );
     const intersects = this.raycaster.intersectObjects(intersectables);
+
     // console.log(intersects.len gth);
     if (intersects.length > 0) {
       //toggle outline effect on
@@ -92,6 +106,22 @@ export default class Sketch {
     } else {
       //toggle outline effect off
       this.outlinePass.selectedObjects = [];
+    }
+
+    const intersectables2 = this.scene.children.filter((child) =>
+      this.sphereMeshes.includes(child)
+    );
+    const intersects2 = this.raycaster.intersectObjects(intersectables2);
+
+    this.sphereSelected = -1;
+    for (let i = 0; i < this.sphereMeshes.length; i++) {
+      this.sphereMeshes[i].material.opacity = 0;
+    }
+
+    if (intersects2.length > 0) {
+      //toggle opacity effect on
+      intersects2[0].object.material.opacity = 0.7;
+      this.sphereSelected = this.sphereMeshes.indexOf(intersects2[0].object);
     }
   }
 
@@ -105,7 +135,7 @@ export default class Sketch {
     this.renderer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
-    this.outlinePass.setSize(this.width, this.height); // Update the OutlinePass size
+    this.outlinePass.setSize(this.width, this.height);
   }
 
   addObjects() {
@@ -129,7 +159,7 @@ export default class Sketch {
     this.geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
     this.plane = new THREE.Mesh(this.geometry, this.material);
 
-    // Create a cube texture
+    // bg
     const cubeTexture = new THREE.CubeTexture();
     const size = 256;
     const faces = ["px", "nx", "py", "ny", "pz", "nz"];
@@ -139,8 +169,8 @@ export default class Sketch {
       canvas.height = size;
       const ctx = canvas.getContext("2d");
       const gradient = ctx.createLinearGradient(0, 0, size, size);
-      gradient.addColorStop(0, "#777777"); // Light gray
-      gradient.addColorStop(1, "#777777"); // Dark gray
+      gradient.addColorStop(0, "#777777");
+      gradient.addColorStop(1, "#777777");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, size, size);
       cubeTexture.images[faces.indexOf(face)] = canvas;
@@ -161,10 +191,10 @@ export default class Sketch {
     spotLight.castShadow = true;
     this.lightgroup.add(spotLight);
 
-    // Load STL model
+    // laod stl file
     const loader = new STLLoader();
     loader.load(
-      "Models/Assembly 1.stl",
+      "Models/untitled.stl",
       (geometry) => {
         geometry.computeVertexNormals();
         geometry.scale(2, 2, 2);
@@ -183,7 +213,6 @@ export default class Sketch {
         mesh.receiveShadow = true;
         this.scene.add(mesh);
 
-        // Add the mesh to the outline pass to show outline
         this.outlinePass.selectedObjects = [mesh];
       },
       (xhr) => {
@@ -193,6 +222,29 @@ export default class Sketch {
         console.log("An error happened");
       }
     );
+
+    this.addRings(this.areas);
+  }
+
+  addRings(data) {
+    for (let i = 0; i < data.length; i++) {
+      const sphereGeometry = new THREE.SphereGeometry(data[i].r, 32, 32);
+
+      const sphereMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffff00,
+        emissive: 0xffff00,
+        emissiveIntensity: 0.8,
+        transparent: true,
+        opacity: 0.5,
+      });
+      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+      sphereMesh.position.set(data[i].x, data[i].y, data[i].z);
+      this.scene.add(sphereMesh);
+      if (this.sphereMeshes.length < data.length) {
+        this.sphereMeshes.push(sphereMesh);
+      }
+    }
   }
 
   stop() {

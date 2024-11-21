@@ -4,11 +4,11 @@ import { useThree } from "../hooks/useThree";
 import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
-  //The argument for useThree is your threejs main class
   const { canvas, threeInstance } = useThree(ThreeApp);
   const [cameraData, setCameraData] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
+  const [sphereSelected, setSphereSelected] = useState(-1);
 
   function handleMouseMove(e) {
     const x = e.clientX;
@@ -47,13 +47,34 @@ export default function Home() {
       }
     };
 
-    // Update the camera position on render
-    const interval = setInterval(updateCameraPosition, 100); // Update every 100ms
-    return () => clearInterval(interval); // Clean up on unmount
+    const interval = setInterval(updateCameraPosition, 100);
+    return () => clearInterval(interval);
   }, [threeInstance]);
 
   return (
     <>
+      <div
+        style={{
+          width: "60vw",
+          height: "30vh",
+          top: "35vh",
+          left: "20vw",
+          paddingTop: "5vh",
+          position: "absolute",
+          fontSize: 48,
+          fontWeight: 900,
+          textAlign: "center",
+          backgroundColor: "rgba(255, 0, 0, 0.9)",
+          display: sphereSelected === -1 ? "none" : "block",
+          color: "white",
+        }}
+        onMouseDown={() => {
+          setSphereSelected(-1);
+        }}
+      >
+        SHORT DESCRIPTION OR VIDEO OR
+        <br /> PICTURE FOR AREA NUMBER: {sphereSelected}
+      </div>
       <div
         style={{
           width: "100vw",
@@ -79,6 +100,16 @@ export default function Home() {
         ref={canvas}
         style={{ height: "100vh" }}
         onMouseMove={(e) => handleMouseMove(e)}
+        onMouseDown={(e) => {
+          if (threeInstance.current) {
+            if (sphereSelected != -1) {
+              setSphereSelected(-1);
+              return;
+            }
+            const selec = threeInstance.current.getSphereSelected();
+            setSphereSelected(selec);
+          }
+        }}
       >
         {cameraData && (
           <div
