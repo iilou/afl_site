@@ -2,6 +2,7 @@ import { useThree } from "../hooks/useThree.js";
 import ThreeApp from "../threejs/ThreeApp.js";
 import { useState } from "react";
 import Setting from "./Setting.js";
+import Head from "next/head";
 
 export default function Home() {
   const { canvas, threeInstance } = useThree(ThreeApp);
@@ -63,94 +64,91 @@ export default function Home() {
     }
   }
 
+  function updateSettings(newSettings) {
+    setSphereSelected(null);
+    setGroupHovered(null);
+    setSettings(structuredClone(newSettings));
+  }
+
   return (
-    <div className="main bg-blue-500 overflow-hidden">
-      <div
-        id="title"
-        className="--font-geist-sans text-3xl font-extrabold text-indigo-500 bg-white rounded-lg w-[400px] left-[calc(50vw-200px)] px-7 py-2 mx-auto absolute top-3 h-fit z-40 text-center"
-      >
-        PRODUCT DEMO
-      </div>
-      <div id="popup"></div>
-      <div
-        id="dropdown"
-        className="--font-geist-mono absolute top-3 p-3   bg-slate-600 bg-opacity-50 rounded-xl group left-3 z-50"
-      >
-        <div className="text-xl font-extrabold text-center px-2">Settings</div>
-        <div className="grid-cols-[auto_auto] hidden group-hover:grid gap-x-2 gap-y-2 mt-4">
-          {settingNames.map((name, i) => {
-            return (
-              <Setting
-                key={i}
-                name={name}
-                identifier={settingIdentifiers[i]}
-                settings={settings}
-                setSettings={setSettings}
-                threeInstance={threeInstance}
-              />
-            );
-          })}
+    <>
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+
+      <div className="main bg-blue-500 overflow-hidden">
+        <div
+          id="title"
+          className="--font-geist-sans text-3xl font-extrabold text-gray-950 shadow-[0px_0px_9px_5px_rgba(0,0,0,1),0px_0px_24px_5px_rgba(35,37,40,1)_inset] bg-slate-100 rounded-lg w-[400px] left-[calc(50vw-200px)] px-9 py-3 mx-auto absolute top-3 h-fit z-40 text-center"
+        >
+          PRODUCT DEMO
         </div>
-      </div>
-      <div
-        className="absolute text-lg group px-5 py-2 bg-slate-600 bg-opacity-50 font-bold bottom-3 left-3 rounded-lg cursor-pointer z-50"
-        onClick={() => setDemoPlaying(!demoPlaying)}
-      >
-        Video Demo
-      </div>
-      <div
-        id="keyregionscontainer"
-        className="absolute right-3 group grid grid-cols-1 gap-1 top-3 py-3 px-5 z-50 rounded-lg bg-slate-600 bg-opacity-50 overflow-y-visible overflow-x-hidden hover:h-52 h-fit"
-      >
-        <div className="text-xl font-extrabold  mx-auto">Parts List</div>
-        {meshList.map((mesh) => {
-          return (
-            <div
-              key={mesh.name}
-              className="bg-slate-400 hover:bg-slate-800 cursor-pointer active:bg-slate-600 px-4 py-[2px] hidden group-hover:block w-fit rounded-sm ml-auto mr-0"
-              onClick={() => {
-                if (threeInstance.current)
-                  threeInstance.current.panToPart(mesh.name);
-              }}
-            >
-              {mesh.name}
-            </div>
-          );
-        })}
-      </div>
-      {demoPlaying && (
-        <div className="absolute w-[100vw] h-[100vh] z-50">
-          <div
-            className="w-full h-full bg-slate-400 bg-opacity-50 absolute"
-            onClick={() => {
-              setDemoPlaying(false);
-            }}
-          ></div>
-          <div className="relative mx-auto font-extrabold text-3xl text-white bg-indigo-500 rounded-lg z-60 py-5 text-center rounded-b-xl">
-            Demo
+        <div id="popup"></div>
+        <div
+          id="dropdown"
+          className=" absolute top-3 p-3 text-slate-100 bg-slate-500 bg-opacity-80 shadow-[0px_0px_7px_4px_rgba(80,85,115,1)_inset,5px_5px_0px_0px_rgba(80,85,115,0.2)] rounded-xl group left-3 z-50"
+        >
+          <div className="text-xl font-extrabold text-center px-2">
+            Settings
           </div>
-          <video
-            className="relative m-auto w-[720px] h-[480px] z-[60]"
-            controls
-            width="720"
-            height="480"
-          >
-            <source src="./Leg Press Demo.mp4" type="video/mp4" />
-          </video>
+          <div className="rajdhani-bold grid-cols-[auto_auto] hidden group-hover:grid gap-x-2 gap-y-2 mt-4">
+            {settingNames.map((name, i) => {
+              return (
+                <Setting
+                  key={i}
+                  name={name}
+                  identifier={settingIdentifiers[i]}
+                  settings={settings}
+                  setSettings={updateSettings}
+                  threeInstance={threeInstance}
+                />
+              );
+            })}
+          </div>
         </div>
-      )}
-      {settings.enablePartsHighlight &&
-        sphereSelected &&
-        sphereSelected.name.split("_")[0] != "Frame" && (
+        <div
+          className="absolute text-base rajdhani-bold group px-5 py-2 bg-slate-600 bg-opacity-80 hover:bg-slate-800 active:bg-slate-700 font-bold bottom-3 left-3 rounded-lg cursor-pointer z-50"
+          onClick={() => setDemoPlaying(!demoPlaying)}
+        >
+          Video Demo
+        </div>
+        <div
+          id="keyregionscontainer"
+          className="absolute right-3 group grid grid-cols-1 gap-1 top-3 py-3 px-5 z-50 text-slate-100 bg-slate-500 bg-opacity-80 shadow-[0px_0px_7px_4px_rgba(80,85,115,1)_inset,5px_5px_0px_0px_rgba(80,85,115,0.2)] rounded-xl h-fit hover:h-44"
+        >
+          <div className="text-xl font-extrabold mx-auto">Parts List</div>
+          <div className="overflow-y-visible group-hover:grid hidden overflow-x-hidden gap-1">
+            {meshList.map((mesh) => {
+              return (
+                <div
+                  key={mesh.name}
+                  className="bg-slate-400 hover:bg-slate-800 cursor-pointer active:bg-slate-600 px-4 py-[2px] w-fit rounded-sm ml-auto mr-0"
+                  onClick={() => {
+                    if (threeInstance.current)
+                      threeInstance.current.panToPart(mesh.name);
+                  }}
+                >
+                  {mesh.name}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        {demoPlaying && (
           <div className="absolute w-[100vw] h-[100vh] z-50">
             <div
               className="w-full h-full bg-slate-400 bg-opacity-50 absolute"
-              onMouseDown={() => {
-                setSphereSelected(false);
+              onClick={() => {
+                setDemoPlaying(false);
               }}
             ></div>
             <div className="relative mx-auto font-extrabold text-3xl text-white bg-indigo-500 rounded-lg z-60 py-5 text-center rounded-b-xl">
-              {sphereSelected.name.split("_").join(" ")}
+              Demo
             </div>
             <video
               className="relative m-auto w-[720px] h-[480px] z-[60]"
@@ -162,31 +160,56 @@ export default function Home() {
             </video>
           </div>
         )}
-      {groupHovered && settings.detailedView && (
-        <div className="absolute bottom-2 right-2 z-50">
-          <div className="relative text-lg font-bold z-50">
-            {groupHovered.name.split("_").join(" ")}
-          </div>
-          {partDetails[groupHovered.name] && (
-            <div className="relative text-base font-base z-50">
-              {partDetails[groupHovered.name].desc}
+        {settings.enablePartsHighlight &&
+          sphereSelected &&
+          sphereSelected.name.split("_")[0] != "Frame" && (
+            <div className="absolute w-[100vw] h-[100vh] z-50">
+              <div
+                className="w-full h-full bg-slate-400 bg-opacity-50 absolute"
+                onMouseDown={() => {
+                  setSphereSelected(false);
+                }}
+              ></div>
+              <div className="relative mx-auto font-extrabold text-3xl text-white bg-indigo-500 rounded-lg z-60 py-5 text-center rounded-b-xl">
+                {sphereSelected.name.split("_").join(" ")}
+              </div>
+              <video
+                className="relative m-auto w-[720px] h-[480px] z-[60]"
+                controls
+                width="720"
+                height="480"
+              >
+                <source src="./Leg Press Demo.mp4" type="video/mp4" />
+              </video>
             </div>
           )}
-        </div>
-      )}
-      <div id="cameralockscreen"></div>
-      <div
-        ref={canvas}
-        className="absolute w-[100vw] h-[100vh] z-10"
-        onMouseMove={(event) => onMouseMove(event)}
-        onMouseDown={() => {
-          if (threeInstance.current) {
-            setSphereSelected(
-              threeInstance.current.getMeshGroupOfHighlightedMesh()
-            );
-          }
-        }}
-      ></div>
-    </div>
+        {groupHovered && settings.detailedView && (
+          <div className="absolute bottom-2 right-2 z-50">
+            <div className="relative text-lg font-bold z-50">
+              {groupHovered.name.split("_").join(" ")}
+            </div>
+            {partDetails[groupHovered.name] && (
+              <div className="relative text-base font-base z-50">
+                {partDetails[groupHovered.name].desc}
+              </div>
+            )}
+          </div>
+        )}
+        <div id="cameralockscreen"></div>
+        <div
+          ref={canvas}
+          className="absolute w-[100vw] h-[100vh] z-10"
+          onMouseMove={(event) => onMouseMove(event)}
+          onMouseDown={(e) => {
+            if (e.button != 0) return;
+            if (threeInstance.current) {
+              setSphereSelected(
+                threeInstance.current.getMeshGroupOfHighlightedMesh()
+              );
+            }
+          }}
+        ></div>
+      </div>
+    </>
   );
 }

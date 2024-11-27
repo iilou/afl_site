@@ -18,4 +18,42 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  /* font-family: "Cambria", "Times New Roman", serif; */
+  /* font-family: "Courier New", monospace; */
+  /* font-family: "Georgia", serif; */
+  /* font-family: "Lucida Console", monospace; */
+  /* font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif */
+  /* font-family: "Tahoma", Geneva, Verdana, sans-serif; */
+  /* font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif; */
+  /* font-family: "Verdana", sans-serif; */
+}
+
+.rajdhani-light {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.rajdhani-regular {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.rajdhani-medium {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.rajdhani-semibold {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.rajdhani-bold {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
+  font-style: normal;
 }

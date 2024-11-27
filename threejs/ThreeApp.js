@@ -77,8 +77,8 @@ export default class Screen {
       canvas.height = size;
       const ctx = canvas.getContext("2d");
       const gradient = ctx.createLinearGradient(0, 0, size, size);
-      gradient.addColorStop(0, "#111111");
-      gradient.addColorStop(1, "#111111");
+      gradient.addColorStop(0, "#aaaaaa");
+      gradient.addColorStop(1, "#aaaaaa");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, size, size);
       cubeTexture.images[faces.indexOf(face)] = canvas;
@@ -90,10 +90,10 @@ export default class Screen {
 
     // make light
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    this.scene.add(ambientLight);
+    // const ambientLight = new THREE.AmbientLight(0x666666, 0.5);
+    // this.scene.add(ambientLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 5);
+    const hemiLight = new THREE.HemisphereLight(0x888888, 0x888888, 8);
     this.scene.add(hemiLight);
 
     // const spotLight = new THREE.SpotLight(0xffffff, 0.4);
@@ -101,12 +101,12 @@ export default class Screen {
     // spotLight.castShadow = true;
     // this.scene.add(spotLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 0.4);
+    const pointLight = new THREE.PointLight(0xffffff, 0.1);
     pointLight.position.set(0, 0, 8);
     pointLight.castShadow = true;
     this.scene.add(pointLight);
 
-    const spotLight2 = new THREE.PointLight(0xffffff, 0.4);
+    const spotLight2 = new THREE.PointLight(0xffffff, 0.1);
     spotLight2.position.set(0, 0, -22);
     spotLight2.castShadow = true;
     this.scene.add(spotLight2);
@@ -182,8 +182,8 @@ export default class Screen {
             metalness: 0.9,
             roughness: 0.5,
             color: meshByGroup[group][i].material.color,
-            envMapIntensity: 1,
-            emmissiveIntensity: 0.9,
+            envMapIntensity: 0.5,
+            emmissiveIntensity: 1,
             flatShading: false,
           });
           meshByGroup[group][i].castShadow = true;

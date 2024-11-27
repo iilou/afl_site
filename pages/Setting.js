@@ -20,7 +20,7 @@ export default function Setting({
       <div
         className={
           "w-8 h-0 group-hover:h-8 rounded-xl  hidden group-hover:block transition-all " +
-          (settings[name] ? "bg-gray-100" : "bg-gray-300")
+          (settings[name] ? "bg-gray-100" : "bg-gray-300 hover:bg-gray-400")
         }
         onMouseDown={test}
       >
@@ -34,7 +34,7 @@ export default function Setting({
       <div
         className={
           "h-8 hidden  group-hover:block rounded-xl px-7 py-1 text-indigo-700 font-extrabold text-base transition-all " +
-          (settings[name] ? "bg-gray-100" : "bg-gray-300")
+          (settings[name] ? "bg-gray-100" : "bg-gray-300 hover:bg-gray-400")
         }
         onMouseDown={test}
       >
