@@ -42,6 +42,7 @@ export default function Home() {
   };
   const [sphereSelected, setSphereSelected] = useState(null);
   const [groupHovered, setGroupHovered] = useState(null);
+  const [bloom, setBloom] = useState(true);
 
   function fishMeshList() {
     if (!threeInstance.current) {
@@ -87,10 +88,10 @@ export default function Home() {
       <div className="main bg-blue-500 overflow-hidden">
         <div
           id="title"
-          className="--font-geist-sans text-3xl font-extrabold text-t1 bg-t4 shadow-[0px_0px_3px_2px_#16697Aff,0px_2px_24px_1px_#16697Aff_inset] rounded-lg w-[400px] left-[calc(50vw-200px)] px-9 py-3 mx-auto absolute top-3 h-fit z-40 text-center"
+          className="--font-geist-sans text-3xl font-extrabold text-t1 bg-t4 shadow-[0px_0px_3px_2px_#16697Aff,0px_2px_24px_1px_#16697Aff_inset] rounded-lg w-[500px] left-[calc(50vw-250px)] px-9 py-3 mx-auto absolute top-3 h-fit z-40 text-center"
           style={{ textShadow: "1px 1px 30px rgba(252, 252, 252, 1)" }}
         >
-          PRODUCT DEMO
+          INTERACTIVE DEMO
         </div>
         <div id="popup"></div>
         <div
@@ -132,6 +133,18 @@ export default function Home() {
         </div>
         <div className={(bomOpen ? "block" : "hidden") + " absolute"}>
           <BOM csvName="./bom.csv" on_exit={setBomOpen} />
+        </div>
+
+        <div
+          className="absolute bottom-3 left-80 text-base rajdhani-bold group px-5 py-2 bg-[#16698A] bg-opacity-80 hover:bg-opacity-90 active:bg-opacity-70 font-bold rounded-lg cursor-pointer z-50"
+          onClick={() => {
+            if (threeInstance.current) {
+              threeInstance.current.toggleBloom(!bloom);
+            }
+            setBloom(!bloom);
+          }}
+        >
+          Toggle Bloom Effect {bloom ? "Off" : "On"}
         </div>
         <div
           id="keyregionscontainer"
@@ -189,20 +202,33 @@ export default function Home() {
                   setSphereSelected(false);
                 }}
               ></div>
-              <Banner title={sphereSelected.name.split("_").join(" ")} />
+              <Banner
+                title={sphereSelected.name
+                  .split("_")
+                  .join(" ")
+                  .replaceAll("+", "&")}
+              />
               <video
                 className="relative m-auto w-[720px] h-[480px] z-[60] top-28"
                 controls
                 width="720"
                 height="480"
               >
-                <source src="./Leg Press Demo.mp4" type="video/mp4" />
+                <source
+                  src={`./Demos/${sphereSelected.name
+                    .split("_")
+                    .join("")
+                    .split("+")
+                    .join("")
+                    .toLowerCase()}.mp4`}
+                  type="video/mp4"
+                />
               </video>
             </div>
           )}
         {groupHovered && settings.detailedView && (
           <div className="absolute bottom-2 right-2 z-50">
-            <div className="relative text-lg font-bold z-50 text-t1">
+            <div className="relative text-lg z-50 text-t1 font-extrabold">
               {groupHovered.name.split("_").join(" ").replaceAll("+", " & ")}
             </div>
             {partDetails[groupHovered.name] && (
@@ -212,6 +238,10 @@ export default function Home() {
             )}
           </div>
         )}
+        <div className="absolute bottom-3 mx-auto text-t3 text-lg opacity-70 z-[100] block w-[220px] text-center h-fit left-[calc(50vw-110px)] bg-t4 font-extrabold py-0 rounded-sm">
+          afl-site.vercel.app
+        </div>
+
         <div id="cameralockscreen"></div>
         <div
           ref={canvas}

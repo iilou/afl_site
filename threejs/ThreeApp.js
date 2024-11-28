@@ -7,6 +7,10 @@ import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { ColorCorrectionShader } from "three/examples/jsm/shaders/ColorCorrectionShader.js";
 
 export default class Screen {
   constructor(selector) {
@@ -33,6 +37,8 @@ export default class Screen {
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // this.renderer.toneMapping = THREE.ReinhardToneMapping;
+    // this.renderer.toneMappingExposure = 0.3;
 
     this.container.appendChild(this.renderer.domElement);
 
@@ -62,11 +68,43 @@ export default class Screen {
     );
     this.outlinePass.selectedObjects = [];
     this.outlinePass.edgeThickness = 1;
-    this.outlinePass.edgeGlow = 1;
+    this.outlinePass.edgeGlow = 0.5;
     this.outlinePass.edgeStrength = 3;
-    this.outlinePass.visibleEdgeColor.set(0x16697a);
+    this.outlinePass.visibleEdgeColor.set(0x00bcd4);
     this.outlinePass.hiddenEdgeColor.set(0x000000);
     this.composer.addPass(this.outlinePass);
+
+    // bloom
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.3,
+      0.1,
+      0.75
+    );
+    this.composer.addPass(bloomPass);
+
+    //fxaa
+    const fxaaPass = new ShaderPass(FXAAShader);
+    const pixelRatio = this.renderer.getPixelRatio();
+    fxaaPass.material.uniforms["resolution"].value.x =
+      1 / (this.width * pixelRatio);
+    fxaaPass.material.uniforms["resolution"].value.y =
+      1 / (this.height * pixelRatio);
+    this.composer.addPass(fxaaPass);
+
+    // color correction
+    const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
+    colorCorrectionPass.uniforms["powRGB"].value = new THREE.Vector3(
+      1.2,
+      1.2,
+      1.2
+    );
+    colorCorrectionPass.uniforms["mulRGB"].value = new THREE.Vector3(
+      1.2,
+      1.2,
+      1.2
+    );
+    // this.composer.addPass(colorCorrectionPass);
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -81,8 +119,12 @@ export default class Screen {
       canvas.height = size;
       const ctx = canvas.getContext("2d");
       const gradient = ctx.createLinearGradient(0, 0, size, size);
-      gradient.addColorStop(0, "#ffffff");
-      gradient.addColorStop(1, "#ffffff");
+      // gradient.addColorStop(0, "#ffffff");
+      // gradient.addColorStop(1, "#ffffff");
+      // gradient.addColorStop(0, "#000000");
+      // gradient.addColorStop(1, "#000000");
+      gradient.addColorStop(0, "#dddddd");
+      gradient.addColorStop(1, "#dddddd");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, size, size);
       cubeTexture.images[faces.indexOf(face)] = canvas;
@@ -94,10 +136,10 @@ export default class Screen {
 
     // make light
 
-    // const ambientLight = new THREE.AmbientLight(0x666666, 0.5);
+    // const ambientLight = new THREE.AmbientLight(0xaaaaaa, 0.5);
     // this.scene.add(ambientLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xeeeeff, 0x333333, 14);
+    const hemiLight = new THREE.HemisphereLight(0xc4c4c4, 0x777777, 12);
     this.scene.add(hemiLight);
 
     // const spotLight = new THREE.SpotLight(0xffffff, 0.4);
@@ -265,6 +307,11 @@ export default class Screen {
     return this.meshGroups[
       this.meshToGroupIndex[this.currentIntersect.object.uuid]
     ];
+  }
+
+  toggleBloom(bool) {
+    console.log("bloom ", bool);
+    this.composer.passes[2].enabled = bool;
   }
 
   updateSettings(settings) {
