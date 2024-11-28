@@ -3,18 +3,21 @@ import ThreeApp from "../threejs/ThreeApp.js";
 import { useState } from "react";
 import Setting from "./Setting.js";
 import Head from "next/head";
+import Banner from "./Banner.js";
+import BOM from "./BOM";
 
 export default function Home() {
   const { canvas, threeInstance } = useThree(ThreeApp);
   const [settings, setSettings] = useState({
-    detailedView: false,
+    detailedView: true,
     enableSpheres: false,
-    enablePartsHighlight: false,
+    enablePartsHighlight: true,
   });
   const settingNames = ["detailedView", "enablePartsHighlight"];
   const settingIdentifiers = ["Detailed View", "Enable Parts Highlight"];
   const [meshList, setMeshList] = useState([]);
   const [demoPlaying, setDemoPlaying] = useState(false);
+  const [bomOpen, setBomOpen] = useState(false);
   const partDetails = {
     Horizontal_Adjustment: {
       name: "Horizontal Rail",
@@ -45,9 +48,9 @@ export default function Home() {
       return;
     }
     const ml = threeInstance.current.getMeshList();
-    console.log("fishMeshList ", meshList, ml);
+    // console.log("fishMeshList ", meshList, ml);
     if (ml && ml.length > meshList) {
-      console.log("fish found ", ml);
+      // console.log("fish found ", ml);
       setMeshList(ml);
     }
   }
@@ -84,16 +87,20 @@ export default function Home() {
       <div className="main bg-blue-500 overflow-hidden">
         <div
           id="title"
-          className="--font-geist-sans text-3xl font-extrabold text-gray-950 shadow-[0px_0px_9px_5px_rgba(0,0,0,1),0px_0px_24px_5px_rgba(35,37,40,1)_inset] bg-slate-100 rounded-lg w-[400px] left-[calc(50vw-200px)] px-9 py-3 mx-auto absolute top-3 h-fit z-40 text-center"
+          className="--font-geist-sans text-3xl font-extrabold text-t1 bg-t4 shadow-[0px_0px_3px_2px_#16697Aff,0px_2px_24px_1px_#16697Aff_inset] rounded-lg w-[400px] left-[calc(50vw-200px)] px-9 py-3 mx-auto absolute top-3 h-fit z-40 text-center"
+          style={{ textShadow: "1px 1px 30px rgba(252, 252, 252, 1)" }}
         >
           PRODUCT DEMO
         </div>
         <div id="popup"></div>
         <div
           id="dropdown"
-          className=" absolute top-3 p-3 text-slate-100 bg-slate-500 bg-opacity-80 shadow-[0px_0px_7px_4px_rgba(80,85,115,1)_inset,5px_5px_0px_0px_rgba(80,85,115,0.2)] rounded-xl group left-3 z-50"
+          className=" absolute top-3 py-4 px-7 group left-3 z-50 text-t1 bg-[#82c0cc] bg-opacity-80 shadow-[0px_0px_7px_4px_#16697Aff_inset,5px_5px_0px_0px_rgba(80,85,115,0.2)] rounded-xl"
         >
-          <div className="text-xl font-extrabold text-center px-2">
+          <div
+            className="text-xl font-extrabold  text-center px-2"
+            style={{ textShadow: "1px 1px 21px #16697Aff" }}
+          >
             Settings
           </div>
           <div className="rajdhani-bold grid-cols-[auto_auto] hidden group-hover:grid gap-x-2 gap-y-2 mt-4">
@@ -112,22 +119,36 @@ export default function Home() {
           </div>
         </div>
         <div
-          className="absolute text-base rajdhani-bold group px-5 py-2 bg-slate-600 bg-opacity-80 hover:bg-slate-800 active:bg-slate-700 font-bold bottom-3 left-3 rounded-lg cursor-pointer z-50"
+          className="absolute text-base rajdhani-bold group px-5 py-2 bg-[#16698A] bg-opacity-80 hover:bg-opacity-90 active:bg-opacity-70 font-bold bottom-3 left-3 rounded-lg cursor-pointer z-50"
           onClick={() => setDemoPlaying(!demoPlaying)}
         >
           Video Demo
         </div>
         <div
-          id="keyregionscontainer"
-          className="absolute right-3 group grid grid-cols-1 gap-1 top-3 py-3 px-5 z-50 text-slate-100 bg-slate-500 bg-opacity-80 shadow-[0px_0px_7px_4px_rgba(80,85,115,1)_inset,5px_5px_0px_0px_rgba(80,85,115,0.2)] rounded-xl h-fit hover:h-44"
+          className="absolute left-36 text-base rajdhani-bold group px-5 py-2  bg-[#16698A] bg-opacity-80 hover:bg-opacity-90 active:bg-opacity-70 font-bold bottom-3  rounded-lg cursor-pointer z-50"
+          onClick={() => setBomOpen(!bomOpen)}
         >
-          <div className="text-xl font-extrabold mx-auto">Parts List</div>
-          <div className="overflow-y-visible group-hover:grid hidden overflow-x-hidden gap-1">
+          Bill of Materials
+        </div>
+        <div className={(bomOpen ? "block" : "hidden") + " absolute"}>
+          <BOM csvName="./bom.csv" on_exit={setBomOpen} />
+        </div>
+        <div
+          id="keyregionscontainer"
+          className="absolute right-3 group grid grid-cols-1 gap-1 top-3 py-4 px-9 z-40 text-t1 bg-[#82c0cc] bg-opacity-80 shadow-[0px_0px_7px_4px_#16697Aff_inset,5px_5px_0px_0px_rgba(80,85,115,0.2)] rounded-xl h-fit hover:h-44"
+        >
+          <div
+            className="text-xl font-extrabold mx-auto "
+            style={{ textShadow: "1px 1px 21px #16697Aff" }}
+          >
+            Parts List
+          </div>
+          <div className="overflow-y-visible group-hover:grid hidden overflow-x-hidden gap-1 mt-2">
             {meshList.map((mesh) => {
               return (
                 <div
                   key={mesh.name}
-                  className="bg-slate-400 hover:bg-slate-800 cursor-pointer active:bg-slate-600 px-4 py-[2px] w-fit rounded-sm ml-auto mr-0"
+                  className="rajdhani-bold px-4 py-[2px] w-fit rounded-sm ml-auto mr-0 bg-gray-300 hover:bg-gray-400 cursor-pointer"
                   onClick={() => {
                     if (threeInstance.current)
                       threeInstance.current.panToPart(mesh.name);
@@ -147,11 +168,9 @@ export default function Home() {
                 setDemoPlaying(false);
               }}
             ></div>
-            <div className="relative mx-auto font-extrabold text-3xl text-white bg-indigo-500 rounded-lg z-60 py-5 text-center rounded-b-xl">
-              Demo
-            </div>
+            <Banner title="Demo" />
             <video
-              className="relative m-auto w-[720px] h-[480px] z-[60]"
+              className="relative m-auto w-[720px] h-[480px] z-[60] top-28"
               controls
               width="720"
               height="480"
@@ -170,11 +189,9 @@ export default function Home() {
                   setSphereSelected(false);
                 }}
               ></div>
-              <div className="relative mx-auto font-extrabold text-3xl text-white bg-indigo-500 rounded-lg z-60 py-5 text-center rounded-b-xl">
-                {sphereSelected.name.split("_").join(" ")}
-              </div>
+              <Banner title={sphereSelected.name.split("_").join(" ")} />
               <video
-                className="relative m-auto w-[720px] h-[480px] z-[60]"
+                className="relative m-auto w-[720px] h-[480px] z-[60] top-28"
                 controls
                 width="720"
                 height="480"
@@ -185,11 +202,11 @@ export default function Home() {
           )}
         {groupHovered && settings.detailedView && (
           <div className="absolute bottom-2 right-2 z-50">
-            <div className="relative text-lg font-bold z-50">
-              {groupHovered.name.split("_").join(" ")}
+            <div className="relative text-lg font-bold z-50 text-t1">
+              {groupHovered.name.split("_").join(" ").replaceAll("+", " & ")}
             </div>
             {partDetails[groupHovered.name] && (
-              <div className="relative text-base font-base z-50">
+              <div className="relative text-base font-base z-50 text-t2">
                 {partDetails[groupHovered.name].desc}
               </div>
             )}

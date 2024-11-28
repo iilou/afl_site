@@ -18,6 +18,10 @@ export default class Screen {
       { x: 0, y: -0.05, z: 0.38, r: 0.5, name: "Pivot" },
     ];
 
+    this.enableSpheres = false;
+    this.enableDetails = true;
+    this.enableHighlight = true;
+
     this.scene = new THREE.Scene();
     this.container = selector;
     this.width = this.container.offsetWidth;
@@ -57,10 +61,10 @@ export default class Screen {
       this.camera
     );
     this.outlinePass.selectedObjects = [];
-    this.outlinePass.edgeThickness = 4;
-    this.outlinePass.edgeGlow = 2;
+    this.outlinePass.edgeThickness = 1;
+    this.outlinePass.edgeGlow = 1;
     this.outlinePass.edgeStrength = 3;
-    this.outlinePass.visibleEdgeColor.set(0x00ff00);
+    this.outlinePass.visibleEdgeColor.set(0x16697a);
     this.outlinePass.hiddenEdgeColor.set(0x000000);
     this.composer.addPass(this.outlinePass);
 
@@ -77,8 +81,8 @@ export default class Screen {
       canvas.height = size;
       const ctx = canvas.getContext("2d");
       const gradient = ctx.createLinearGradient(0, 0, size, size);
-      gradient.addColorStop(0, "#aaaaaa");
-      gradient.addColorStop(1, "#aaaaaa");
+      gradient.addColorStop(0, "#ffffff");
+      gradient.addColorStop(1, "#ffffff");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, size, size);
       cubeTexture.images[faces.indexOf(face)] = canvas;
@@ -93,7 +97,7 @@ export default class Screen {
     // const ambientLight = new THREE.AmbientLight(0x666666, 0.5);
     // this.scene.add(ambientLight);
 
-    const hemiLight = new THREE.HemisphereLight(0x888888, 0x888888, 8);
+    const hemiLight = new THREE.HemisphereLight(0xeeeeff, 0x333333, 14);
     this.scene.add(hemiLight);
 
     // const spotLight = new THREE.SpotLight(0xffffff, 0.4);
@@ -101,15 +105,15 @@ export default class Screen {
     // spotLight.castShadow = true;
     // this.scene.add(spotLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 0.1);
-    pointLight.position.set(0, 0, 8);
-    pointLight.castShadow = true;
-    this.scene.add(pointLight);
+    // const pointLight = new THREE.PointLight(0xffffff, 0.1);
+    // pointLight.position.set(0, 0, 8);
+    // pointLight.castShadow = true;
+    // this.scene.add(pointLight);
 
-    const spotLight2 = new THREE.PointLight(0xffffff, 0.1);
-    spotLight2.position.set(0, 0, -22);
-    spotLight2.castShadow = true;
-    this.scene.add(spotLight2);
+    // const spotLight2 = new THREE.PointLight(0xffffff, 0.1);
+    // spotLight2.position.set(0, 0, -22);
+    // spotLight2.castShadow = true;
+    // this.scene.add(spotLight2);
 
     // load all parts
     this.metalShaderMaterial = new THREE.ShaderMaterial({
@@ -152,7 +156,7 @@ export default class Screen {
       };
       // traverse(geo.scene);
       for (const child in geo.scene.children) {
-        console.log("child ", geo.scene.children[child]);
+        // console.log("child ", geo.scene.children[child]);
         meshGroups.push(geo.scene.children[child]);
         meshByGroup[geo.scene.children[child].name] = [];
         traverse(
@@ -161,8 +165,8 @@ export default class Screen {
         );
       }
 
-      console.log("meshByGroup ", meshByGroup);
-      console.log("meshGroups ", meshGroups);
+      // console.log("meshByGroup ", meshByGroup);
+      // console.log("meshGroups ", meshGroups);
 
       this.meshToGroupIndex = {};
       for (let i = 0; i < meshGroups.length; i++) {
@@ -171,7 +175,7 @@ export default class Screen {
         }
       }
 
-      console.log("meshToGroupIndex ", this.meshToGroupIndex);
+      // console.log("meshToGroupIndex ", this.meshToGroupIndex);
 
       for (const group in meshByGroup) {
         for (let i = 0; i < meshByGroup[group].length; i++) {
@@ -182,7 +186,7 @@ export default class Screen {
             metalness: 0.9,
             roughness: 0.5,
             color: meshByGroup[group][i].material.color,
-            envMapIntensity: 0.5,
+            envMapIntensity: 0.1,
             emmissiveIntensity: 1,
             flatShading: false,
           });
@@ -209,7 +213,7 @@ export default class Screen {
       //   meshes[i].receiveShadow = true;
       // }
       // this.scene.add(geo.scene);
-      console.log("geo ", geo.scene);
+      // console.log("geo ", geo.scene);
 
       // raw data to thinsg
       const meshes = [];
@@ -226,10 +230,6 @@ export default class Screen {
     });
     this.currentIntersect = null;
     this.currentIntersectNum = -1;
-
-    this.enableSpheres = false;
-    this.enableDetails = false;
-    this.enableHighlight = false;
 
     this.resize();
     this.render();
@@ -361,9 +361,9 @@ export default class Screen {
     }
 
     // detect hover over spheres
-    console.log("that ", this.sphereMesh);
+    // console.log("that ", this.sphereMesh);
     if (!this.sphereMesh || !this.enableSpheres) return;
-    console.log("this");
+    // console.log("this");
 
     const origin = this.raycaster.ray.origin;
     const direction = this.raycaster.ray.direction;

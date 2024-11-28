@@ -5,6 +5,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --t1: #16697a;
+  --t2: #489fb5;
+  --t3: #82c0cc;
+  --t4: #ede7e3;
+  --t5: #ffa62b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,4 +62,104 @@ body {
   font-family: "Rajdhani", sans-serif;
   font-weight: 700;
   font-style: normal;
+}
+
+.text-t1 {
+  color: #16697a;
+}
+
+.text-t2 {
+  color: #489fb5;
+}
+
+.text-t3 {
+  color: #82c0cc;
+}
+
+.text-t4 {
+  color: #ede7e3;
+}
+
+.text-t5 {
+  color: #ffa62b;
+}
+
+.bg-t1 {
+  background-color: #16697a;
+}
+
+.bg-t2 {
+  background-color: #489fb5;
+}
+
+.bg-t3 {
+  background-color: #82c0cc;
+}
+
+.bg-t4 {
+  background-color: #ede7e3;
+}
+
+.bg-t5 {
+  background-color: #ffa62b;
+}
+
+.hv-t1 {
+  &:hover {
+    color: #16697a;
+  }
+}
+
+.hv-t2 {
+  &:hover {
+    color: #489fb5;
+  }
+}
+
+.hv-t3 {
+  &:hover {
+    color: #82c0cc;
+  }
+}
+
+.hv-t4 {
+  &:hover {
+    color: #ede7e3;
+  }
+}
+
+.hv-t5 {
+  &:hover {
+    color: #ffa62b;
+  }
+}
+
+.hv-bg-t1 {
+  &:hover {
+    background-color: #16697a;
+  }
+}
+
+.hv-bg-t2 {
+  &:hover {
+    background-color: #489fb5;
+  }
+}
+
+.hv-bg-t3 {
+  &:hover {
+    background-color: #82c0cc;
+  }
+}
+
+.hv-bg-t4 {
+  &:hover {
+    background-color: #ede7e3;
+  }
+}
+
+.hv-bg-t5 {
+  &:hover {
+    background-color: #ffa62b;
+  }
 }

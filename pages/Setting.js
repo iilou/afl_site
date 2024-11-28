@@ -26,14 +26,14 @@ export default function Setting({
       >
         <div
           className={
-            "w-6 h-6  mx-auto mt-1 rounded-full relative block z-[60] bg-slate-700  " +
+            "w-6 h-6  mx-auto mt-1 rounded-full relative block z-[60] bg-t1  " +
             (settings[name] ? "block" : "hidden")
           }
         ></div>
       </div>
       <div
         className={
-          "h-8 hidden  group-hover:block rounded-xl px-7 py-1 text-indigo-700 font-extrabold text-base transition-all " +
+          "h-8 hidden  group-hover:block rounded-xl px-7 py-1 text-t1 font-extrabold text-base transition-all " +
           (settings[name] ? "bg-gray-100" : "bg-gray-300 hover:bg-gray-400")
         }
         onMouseDown={test}

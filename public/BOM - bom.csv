@@ -1,0 +1,5 @@
+Name,Description,Quantity,Material,Amount_Spent,Production_Cost,Viable_Alternative
+1. Box Extrusion,1x2” box extrusion,5-6ft,1/16” Aluminum,$18,$18,$18
+2. Sheet Metal,¼” Sheet Metal Plate,4pc x 4x5”.4pc x 1x5”.2pc x 3x4”.1pc x 3x2”.1pc x 1x4”.1pc x 2x24”,Aluminum,$25,$18,$18
+3. 3030 Extrusion,1x2” box extrusion,5-6ft,1/16” Aluminum,$18,$18,$18
+3. 3030 Extrusion,¼” Sheet Metal Plate,.4pc x 4x5”.4pc x 1x5”.2pc x 3x4”.1pc x 3x2”.1pc x 1x4”.1pc x 2x24”,Aluminum,$25,$18,$18
